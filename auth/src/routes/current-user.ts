@@ -1,5 +1,5 @@
 import express from "express";
-import { currentUser } from "../../../common/src/middlewares/current-user";
+import { currentUser } from "@le-ma/common";
 
 const router = express.Router();
 
