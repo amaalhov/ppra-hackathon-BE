@@ -1,18 +1,24 @@
-apiVersion: skaffold/v2alpha3
+apiVersion: skaffold/v4beta6
 kind: Config
-deploy:
-  kubectl:
-    manifests:
-      - ./infra/k8s/*
 build:
   local:
     push: false
   artifacts:
-    - image: amaalhov/auth
-      context: auth
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
+    - image: registration
+      context: registration
+      requires:
+        - image: base
+          alias: BASE
+    - image: database
+      context: database
+    - image: base
+      context: base
+manifests:
+  rawYaml:
+    - registration/k8s/*
+    - database/k8s/*
+portForward:
+  - resourceType: deployment
+    resourceName: registration
+    port: http
+    localPort: 3000
