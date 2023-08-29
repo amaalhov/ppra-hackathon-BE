@@ -9,8 +9,6 @@ build:
       requires:
         - image: base
           alias: BASE
-    - image: database
-      context: database
     - image: base
       context: base
 manifests:
