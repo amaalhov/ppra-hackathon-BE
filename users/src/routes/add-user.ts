@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { requireAuth, validateRequest } from '@le-ma/common';
+import { User } from '../models/users';
 
 const router = express.Router();
 
@@ -21,8 +22,20 @@ router.post(
     body('role').not().isEmpty().withMessage('Role is required'),
   ],
   validateRequest,
-  (req: Request, res: Response) => {
-    res.sendStatus(200);
+  async (req: Request, res: Response) => {
+    const { fullnames, idno, email, role, idcard, verified, status } = req.body;
+    const user = User.build({
+      userId: req.currentUser!.id,
+      fullnames,
+      idno,
+      email,
+      role,
+      idcard,
+      verified,
+      status,
+    });
+    await user.save();
+    res.sendStatus(201).send(user);
   }
 );
 
