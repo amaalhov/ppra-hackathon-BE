@@ -1,12 +1,17 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { requireAuth, validateRequest } from '@le-ma/common';
+import {
+  validateRequest,
+  NotFoundError,
+  requireAuth,
+  NotAuthorizedError,
+} from '@le-ma/common';
 import { User } from '../models/user';
 
 const router = express.Router();
 
-router.post(
-  '/api/users',
+router.put(
+  '/api/users/:id',
   requireAuth,
   [
     // body('userId').not().isEmpty().withMessage('UID is required'),
@@ -23,20 +28,30 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { fullnames, idno, role, idcard, verified, status } = req.body;
-    const user = User.build({
-      userId: req.currentUser!.id,
-      fullnames,
-      idno,
-      email: req.currentUser!.email,
-      role,
-      idcard,
-      verified,
-      status,
+    const user = await User.findById(req.currentUser?.id);
+
+    console.log('user', user);
+
+    if (!user) {
+      throw new NotFoundError();
+    }
+
+    if (user.userId !== req.currentUser!.id) {
+      throw new NotAuthorizedError();
+    }
+
+    user.set({
+      fullnames: req.body.fullnames,
+      idno: req.body.idno,
+      role: req.body.role,
+      idcard: req.body.idcard,
+      verified: req.body.verified,
+      status: req.body.status,
     });
     await user.save();
-    res.status(201).send(user);
+    // res.status(201);
+    res.send(user);
   }
 );
 
-export { router as createUserRouter };
+export { router as updateUserRouter };
