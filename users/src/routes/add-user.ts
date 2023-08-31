@@ -8,7 +8,7 @@ router.post(
   '/api/users/add',
   requireAuth,
   [
-    body('userid').not().isEmpty().withMessage('UID is required'),
+    body('userId').not().isEmpty().withMessage('UID is required'),
     body('fullnames').not().isEmpty().withMessage('Fullnames is required'),
     body('idno').not().isEmpty().withMessage('Omang Number is required'),
     body('idcard').not().isEmpty().withMessage('Upload ID card is required'),
