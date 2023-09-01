@@ -1,6 +1,11 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { requireAuth, validateRequest } from '@le-ma/common';
+import {
+  requireAuth,
+  validateRequest,
+  BadRequestError,
+  currentUser,
+} from '@le-ma/common';
 import { User } from '../models/user';
 
 const router = express.Router();
@@ -23,7 +28,14 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
-    const { fullnames, idno, role, idcard, verified, status } = req.body;
+    const { fullnames, idno, role, idcard, verified, status, email } = req.body;
+
+    const existingUser = await User.findOne({ userId: req.currentUser!.id });
+
+    if (existingUser) {
+      throw new BadRequestError('Email registered to another user.');
+    }
+
     const user = User.build({
       userId: req.currentUser!.id,
       fullnames,

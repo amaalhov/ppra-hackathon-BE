@@ -29,6 +29,7 @@ router.put(
   validateRequest,
   async (req: Request, res: Response) => {
     const user = await User.findById(req.currentUser?.id);
+    // const user = await User.findById('64f0d4ea0eb96d6df4d8f48b');
 
     console.log('user', user);
 
