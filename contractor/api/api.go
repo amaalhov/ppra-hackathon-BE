@@ -22,7 +22,7 @@ func NewContractorStore(db *pgxpool.Pool) *ContractorStore {
 const insertCipaDetails = `
 	INSERT INTO contractor (name, business_type, ownership_type, cipa_uin, is_registered_with_cipa, registration_date)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	RETURNING *;
+	RETURNING uid;
 `
 
 const insertCompanyDetails = `
@@ -38,12 +38,14 @@ func (c *ContractorStore) AddContractorDetails(w http.ResponseWriter, req bunrou
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "something went wrong",
 			"success": false,
 		})
 	}
+	defer conn.Release()
 
 	var row pgx.Row
 
@@ -69,6 +71,7 @@ func (c *ContractorStore) AddContractorDetails(w http.ResponseWriter, req bunrou
 		})
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, bunrouter.H{"company_uuid": companyUuid})
 }
@@ -80,12 +83,14 @@ func (c *ContractorStore) AddContractorProjects(w http.ResponseWriter, req bunro
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "something went wrong",
 			"success": false,
 		})
 	}
+	defer conn.Release()
 
 	var copyData [][]interface{}
 
@@ -102,6 +107,7 @@ func (c *ContractorStore) AddContractorProjects(w http.ResponseWriter, req bunro
 
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "failed to add affiliates",
@@ -109,6 +115,7 @@ func (c *ContractorStore) AddContractorProjects(w http.ResponseWriter, req bunro
 		})
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, bunrouter.H{
 		"message":      "successfully added affiliates",
@@ -123,12 +130,14 @@ func (c *ContractorStore) AddContractorAffiliates(w http.ResponseWriter, req bun
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "something went wrong",
 			"success": false,
 		})
 	}
+	defer conn.Release()
 
 	var copyData [][]interface{}
 
@@ -145,6 +154,7 @@ func (c *ContractorStore) AddContractorAffiliates(w http.ResponseWriter, req bun
 
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "failed to add affiliates",
@@ -152,6 +162,7 @@ func (c *ContractorStore) AddContractorAffiliates(w http.ResponseWriter, req bun
 		})
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, bunrouter.H{
 		"message":      "successfully added affiliates",
@@ -179,6 +190,7 @@ func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req
 			"success": false,
 		})
 	}
+	defer conn.Release()
 
 	row := conn.QueryRow(
 		req.Context(), insertAddress, reqBody.Country, reqBody.DistrictName, reqBody.Town, reqBody.PlotNumber, reqBody.Street,
@@ -269,6 +281,7 @@ func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bu
 			"success": false,
 		})
 	}
+	defer conn.Release()
 
 	row := conn.QueryRow(
 		req.Context(), insertBankDetails, reqBody.BankName, reqBody.Branch, reqBody.BranchAddress, reqBody.AccountNumber, reqBody.AccountType,
@@ -338,6 +351,7 @@ func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunr
 			"success": false,
 		})
 	}
+	defer conn.Release()
 
 	row := conn.QueryRow(
 		req.Context(), insertSecretary, reqBody.Fullname, reqBody.Nationality, reqBody.GovernmentIdentification, reqBody.GovernmentIdentificationType, reqBody.Telephone, reqBody.BusinessPhoneNumber, reqBody.CellNumber, reqBody.Email, "SECRETARY")
