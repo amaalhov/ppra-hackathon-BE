@@ -41,7 +41,7 @@ func main() {
 	router.POST("/api/contractor/company-address", contractorStore.AddContractorAddressDetails)
 	router.POST("/api/contractor/contact", contractorStore.AddContractorContactDetails)
 	router.POST("/api/contractor/affiliates", contractorStore.AddContractorAffiliates)
-	router.POST("/api/contractor/projects", contractorStore.AddContractorAffiliates)
+	router.POST("/api/contractor/projects", contractorStore.AddContractorProjects)
 	router.POST("/api/contractor/contact-postal-address", contractorStore.AddContractorPostalAddress)
 	router.POST("/api/contractor/bank-details", contractorStore.AddContractorBankDetails)
 	router.POST("/api/contractor/company-directors", contractorStore.AddContractorDirector)

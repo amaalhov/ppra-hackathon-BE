@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -80,8 +81,17 @@ type Company struct {
 
 func main() {
 	router := bunrouter.New()
-	router.GET("/api/external_services/cipa", func(w http.ResponseWriter, req bunrouter.Request) error {
+
+	router.POST("/api/external_services/cipa", func(w http.ResponseWriter, req bunrouter.Request) error {
 		// req embeds *http.Request and has all the same fields and methods
+		type reqData struct {
+			Fullname string `json:"representative_name"`
+		}
+
+		var r reqData
+
+		json.NewDecoder(req.Body).Decode(&r)
+
 		uin := req.URL.Query().Get("cipa_uin")
 		if uin == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -285,6 +295,43 @@ func main() {
 
 		return bunrouter.JSON(w, company)
 	})
+
+	router.GET("/api/external_services/NIR", func(w http.ResponseWriter, req bunrouter.Request) error {
+		id := req.URL.Query().Get("national_id_number")
+		if id == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return bunrouter.JSON(w, bunrouter.H{
+				"message": "national id number is required",
+				"status":  false,
+			})
+		}
+
+		if id == "123456789" {
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			return bunrouter.JSON(w, bunrouter.H{
+				"id_number":             "123456789",
+				"surname":               "Doe",
+				"forenames":             "Jane",
+				"date_of_birth":         "10/01/2000",
+				"place_of_birth":        "Gaborone",
+				"signature":             "",
+				"nationality":           "Motswana",
+				"sex":                   "Female",
+				"color_of_eyes":         "Blue",
+				"date_of_expiry":        "14/12/2030",
+				"place_of_application":  "Borakanelo",
+				"signature_of_register": "",
+			})
+		}
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "national id not found on national registry",
+			"status":  false,
+		})
+	})
+
 	log.Println("external services listening on http://localhost:3001")
 	log.Println(http.ListenAndServe(":3001", router))
 }

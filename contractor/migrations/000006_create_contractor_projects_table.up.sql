@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS contractor_project (
 	name TEXT,
 	description TEXT,
 	client_name TEXT,
-	client_representative,
-	client_contact_number
+	client_representative TEXT,
+	client_contact_number TEXT
 );
