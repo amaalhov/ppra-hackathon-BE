@@ -19,21 +19,104 @@ func NewContractorStore(db *pgxpool.Pool) *ContractorStore {
 	return &ContractorStore{db: db}
 }
 
-func (c *ContractorStore) AddContractorDetails(w http.ResponseWriter, req bunrouter.Request) error {
-	var reqBody model.ContractorDetailsReq
-
-	json.NewDecoder(req.Body).Decode(&reqBody)
-
-	return bunrouter.JSON(w, reqBody)
-}
-
-const insertAffiliates = `
-	INSERT INTO contractor_affiliate (full_name, address, attachment_url)
-	VALUES ($1, $2, $3)
+const insertCipaDetails = `
+	INSERT INTO contractor (name, business_type, ownership_type, cipa_uin, is_registered_with_cipa, registration_date)
+	VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING *;
 `
 
-func (c *ContractorStore) AddAffiliates(w http.ResponseWriter, req bunrouter.Request) error {
+const insertCompanyDetails = `
+	INSERT INTO contractor (name, business_type, ownership_type, national_id, is_registered_with_cipa, registration_date)
+	VALUES ($1, $2, $3, $4, $5, $6)
+	RETURNING uid;
+`
+
+func (c *ContractorStore) AddContractorDetails(w http.ResponseWriter, req bunrouter.Request) error {
+	var reqBody model.ContractorDetailsReq
+	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	conn, err := c.db.Acquire(req.Context())
+	if err != nil {
+		log.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "something went wrong",
+			"success": false,
+		})
+	}
+
+	var row pgx.Row
+
+	if reqBody.IsRegisteredWithCIPA {
+		row = conn.QueryRow(
+			req.Context(), insertCipaDetails, reqBody.NameOfCompany, reqBody.BusinessType, reqBody.OwnershipType, reqBody.CipaUin, reqBody.IsRegisteredWithCIPA, reqBody.RegistrationDate)
+	} else {
+		row = conn.QueryRow(
+			req.Context(), insertCompanyDetails, reqBody.NameOfCompany, reqBody.BusinessType, reqBody.OwnershipType, reqBody.NationalIdNumber, reqBody.IsRegisteredWithCIPA, reqBody.RegistrationDate)
+	}
+
+	var companyUuid string
+
+	//var result model.ContractorDetailsReq
+	err = row.Scan(&companyUuid)
+
+	if err != nil {
+		log.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "failed to add company",
+			"success": false,
+		})
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	return bunrouter.JSON(w, bunrouter.H{"company_uuid": companyUuid})
+}
+
+func (c *ContractorStore) AddContractorProjects(w http.ResponseWriter, req bunrouter.Request) error {
+	var reqBody model.ContractorProjectReq
+	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	conn, err := c.db.Acquire(req.Context())
+	if err != nil {
+		log.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "something went wrong",
+			"success": false,
+		})
+	}
+
+	var copyData [][]interface{}
+
+	for _, data := range reqBody.ContractorProjects {
+		copyData = append(copyData, []interface{}{data.ProjectName, data.Description, data.ClientName, data.ClientRepresentative, data.ClientContactNumber})
+	}
+
+	copyCount, err := conn.CopyFrom(
+		req.Context(),
+		pgx.Identifier{"contractor_project"},
+		[]string{"name", "description", "client_name", "client_representative", "client_contact_number"},
+		pgx.CopyFromRows(copyData),
+	)
+
+	if err != nil {
+		log.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "failed to add affiliates",
+			"success": false,
+		})
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	return bunrouter.JSON(w, bunrouter.H{
+		"message":      "successfully added affiliates",
+		"number_added": copyCount,
+	})
+}
+
+func (c *ContractorStore) AddContractorAffiliates(w http.ResponseWriter, req bunrouter.Request) error {
 	var reqBody model.ContractorAffiliateReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
 
@@ -55,7 +138,7 @@ func (c *ContractorStore) AddAffiliates(w http.ResponseWriter, req bunrouter.Req
 
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
-		pgx.Identifier{"contractor_affiliates"},
+		pgx.Identifier{"contractor_affiliate"},
 		[]string{"full_name", "address", "attachment_url"},
 		pgx.CopyFromRows(copyData),
 	)
@@ -71,8 +154,8 @@ func (c *ContractorStore) AddAffiliates(w http.ResponseWriter, req bunrouter.Req
 
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, bunrouter.H{
-		"message":                    "successfully added affiliates",
-		"number of affiliates added": copyCount,
+		"message":      "successfully added affiliates",
+		"number_added": copyCount,
 	})
 }
 
@@ -232,7 +315,7 @@ func (c *ContractorStore) AddContractorEmployees(w http.ResponseWriter, req bunr
 const insertSecretary = `
 	INSERT INTO contractor_contact (full_name, nationality, gov_id, gov_id_type, telephone, business_number, cellphone, email, contact_type)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-	RETURNING *;
+	RETURNING id, full_name, nationality, gov_id, gov_id_type, telephone, business_number, cellphone, email;
 `
 
 func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunrouter.Request) error {

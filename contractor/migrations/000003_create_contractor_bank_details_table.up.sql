@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS contractor_bank_detail (
-	ID SERIAL PRIMARY KEY,
+	id SERIAL PRIMARY KEY,
 	bank_name TEXT,
 	branch TEXT,
 	branch_address TEXT,

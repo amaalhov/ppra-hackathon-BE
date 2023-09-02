@@ -79,3 +79,15 @@ type ContractorAffiliate struct {
 type ContractorAffiliateReq struct {
 	ContractorAffiliates []ContractorAffiliate `json:"contractor_affiliates"`
 }
+
+type ContractorProject struct {
+	ProjectName          string `json:"project_name,omitempty"`
+	Description          string `json:"description,omitempty"`
+	ClientName           string `json:"client_name,omitempty"`
+	ClientRepresentative string `json:"client_representative,omitempty"`
+	ClientContactNumber  string `json:"client_contact_number,omitempty"`
+}
+
+type ContractorProjectReq struct {
+	ContractorProjects []ContractorProject `json:"contractor_projects"`
+}
