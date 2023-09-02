@@ -24,3 +24,10 @@ spec:
                 name: external-services
                 port:
                   number: 3001
+          - path: /api/contractor/*/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: auth
+                port:
+                  number: 3002

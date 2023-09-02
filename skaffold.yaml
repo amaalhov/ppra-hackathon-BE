@@ -6,29 +6,28 @@ build:
   artifacts:
     - image: external-services
       context: external-services
-      requires:
-        - image: base
-          alias: BASE
+    - image: contractor
+      context: contractor
     - image: auth
       context: auth
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: base
-      context: base
 manifests:
   rawYaml:
     - k8s/external-services/*
-    - k8s/auth/*
+    - k8s/contractor/*
     - k8s/mongodb/*
-    - k8s/networking/
+    - k8s/auth/*
+    - k8s/postgresdb/*
+    - k8s/networking/*
 portForward:
+  - resourceType: deployment
+    resourceName: auth
+    port: http
+    localPort: 3000
   - resourceType: deployment
     resourceName: external-services
     port: http
     localPort: 3001
   - resourceType: deployment
-    resourceName: auth
+    resourceName: contractor
     port: http
-    localPort: 3000
+    localPort: 3002
