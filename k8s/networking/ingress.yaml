@@ -10,7 +10,7 @@ spec:
     - host:
       http:
         paths:
-          - path: /api/user/?(.*)
+          - path: /api/auth/?(.*)
             pathType: Prefix
             backend:
               service:
@@ -28,6 +28,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: auth
+                name: contractor
                 port:
                   number: 3002
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: users
+                port:
+                  number: 3003

@@ -1,11 +1,11 @@
-name: deploy-auth
+name: deploy-contractor
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'auth/**'
+      - 'contractor/**'
 
 jobs:
   build:
@@ -16,10 +16,10 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - run: cd auth && docker build -t amaalhov/auth .
+      - run: cd contractor && docker build -t amaalhov/contractor .
       - run: docker push amaalhov/auth
       - uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - run: doctl kubernetes cluster kubeconfig save k8s-ppra
-      - run: kubectl rollout restart deployment auth
+      - run: kubectl rollout restart deployment contractor

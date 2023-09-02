@@ -1,15 +1,29 @@
-import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { BadRequestError } from "@le-ma/common";
+import express, { Request, Response } from 'express';
+import { body } from 'express-validator';
+import jwt from 'jsonwebtoken';
+import { validateRequest, BadRequestError } from '@le-ma/common';
 
-import { Password } from "../services/password";
-import { User } from "../models/user";
+import { Password } from '../services/password';
+import { User } from '../models/user';
 
-export async function signInUsingEmailAndPassword(req: Request, res: Response) {
+const router = express.Router();
+
+router.post(
+  '/api/auth/signin',
+  [
+    body('email').isEmail().withMessage('Email must be valid'),
+    body('password')
+      .trim()
+      .notEmpty()
+      .withMessage('You must supply a password'),
+  ],
+  validateRequest,
+  async (req: Request, res: Response) => {
     const { email, password } = req.body;
+
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      throw new BadRequestError("Invalid credentials");
+      throw new BadRequestError('Invalid credentials');
     }
 
     const passwordsMatch = await Password.compare(
@@ -17,7 +31,7 @@ export async function signInUsingEmailAndPassword(req: Request, res: Response) {
       password
     );
     if (!passwordsMatch) {
-      throw new BadRequestError("Invalid Credentials");
+      throw new BadRequestError('Invalid Credentials');
     }
 
     // Generate JWT
@@ -35,4 +49,7 @@ export async function signInUsingEmailAndPassword(req: Request, res: Response) {
     };
 
     res.status(200).send(existingUser);
-}
+  }
+);
+
+export { router as signinRouter };

@@ -10,12 +10,15 @@ build:
       context: contractor
     - image: auth
       context: auth
+    - image: users
+      context: users
 manifests:
   rawYaml:
     - k8s/external-services/*
     - k8s/contractor/*
     - k8s/mongodb/*
     - k8s/auth/*
+    - k8s/users/*
     - k8s/postgresdb/*
     - k8s/networking/*
 portForward:
@@ -31,3 +34,7 @@ portForward:
     resourceName: contractor
     port: http
     localPort: 3002
+  - resourceType: deployment
+    resourceName: users
+    port: http
+    localPort: 3003
