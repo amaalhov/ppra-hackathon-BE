@@ -172,6 +172,7 @@ func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "something went wrong",
@@ -190,6 +191,7 @@ func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req
 
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "failed to add address",
@@ -197,6 +199,7 @@ func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req
 		})
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, result)
 }
@@ -259,6 +262,7 @@ func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bu
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "something went wrong",
@@ -277,6 +281,7 @@ func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bu
 
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "failed to add bank details",
@@ -284,6 +289,7 @@ func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bu
 		})
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, result)
 }
@@ -325,6 +331,7 @@ func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunr
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "something went wrong",
@@ -342,6 +349,7 @@ func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunr
 
 	if err != nil {
 		log.Println(err.Error())
+		w.Header().Add("Content-Type", "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		return bunrouter.JSON(w, bunrouter.H{
 			"message": "failed to add bank details",
@@ -349,6 +357,7 @@ func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunr
 		})
 	}
 
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, result)
 }
