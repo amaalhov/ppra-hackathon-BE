@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: users
-          image: users
+          image: amaalhov/users
           ports:
             - containerPort: 3003
               name: http
@@ -26,4 +26,3 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
-

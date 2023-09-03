@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: contractor
-          image: contractor
+          image: amaalhov/contractor
           ports:
             - containerPort: 3002
               name: http
