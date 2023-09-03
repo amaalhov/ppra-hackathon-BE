@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	time.Sleep(60 * time.Second)
+	time.Sleep(30 * time.Second)
 	dbUrl := "postgresql://admin:psltest@postgresdb:5432/postgres?sslmode=disable"
 	pool, err := pgxpool.New(context.Background(), dbUrl)
 	if err != nil {

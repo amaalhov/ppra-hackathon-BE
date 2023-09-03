@@ -16,7 +16,7 @@ spec:
         - name: users
           image: users
           ports:
-            - containerPort: 3000
+            - containerPort: 3003
               name: http
           env:
             - name: MONGO_URI
@@ -26,3 +26,4 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+
