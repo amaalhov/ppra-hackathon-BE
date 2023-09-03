@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := m.Up(); err != nil && err.Error() != "no change" {
+	if err := m.Force(1); err != nil && err.Error() != "no change" {
 		log.Fatal(err)
 	}
 
@@ -39,12 +39,12 @@ func main() {
 
 	router.POST("/api/contractor/company-details", contractorStore.AddContractorDetails)
 	router.POST("/api/contractor/company-address", contractorStore.AddContractorAddressDetails)
-	router.POST("/api/contractor/contact", contractorStore.AddContractorContactDetails)
+	router.POST("/api/contractor/contact", contractorStore.AddContractorContacts)
 	router.POST("/api/contractor/affiliates", contractorStore.AddContractorAffiliates)
 	router.POST("/api/contractor/projects", contractorStore.AddContractorProjects)
-	router.POST("/api/contractor/contact-postal-address", contractorStore.AddContractorPostalAddress)
+	router.POST("/api/contractor/equipment", contractorStore.AddContractorEquipment)
 	router.POST("/api/contractor/bank-details", contractorStore.AddContractorBankDetails)
-	router.POST("/api/contractor/company-directors", contractorStore.AddContractorDirector)
+	router.POST("/api/contractor/company-directors", contractorStore.AddContractorDirectors)
 	router.POST("/api/contractor/company-shareholders", contractorStore.AddContractorShareHolder)
 	router.POST("/api/contractor/company-employees", contractorStore.AddContractorEmployees)
 	router.POST("/api/contractor/company-secretary", contractorStore.AddContractorSecretary)

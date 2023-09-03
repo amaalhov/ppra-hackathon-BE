@@ -5,12 +5,21 @@
 	middle_name TEXT,
 	last_name TEXT,
 	nationality TEXT,
+	gender CHAR,
 	gov_id TEXT,
 	gov_id_type TEXT,
 	contact_type TEXT,
 	date_of_birth TIMESTAMPTZ,
+	appointment_date TIMESTAMPTZ,
 	email TEXT,
 	cellphone TEXT,
 	telephone TEXT,
-	business_number TEXT
+	business_number TEXT,
+	country TEXT,
+	district TEXT,
+	town TEXT,
+	street TEXT,
+	box_address TEXT,
+	plot_number TEXT,
+	physical_address TEXT
 );
