@@ -36,7 +36,7 @@ func (c *ContractorStore) AddContractorShareHolder(w http.ResponseWriter, req bu
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_shareholder"},
-		[]string{"full_name", "nationality", "postal_address", "physical_address", "appointment_date"},
+		[]string{"full_name", "nationality", "box_address", "physical_address", "appointment_date"},
 		pgx.CopyFromRows(copyData),
 	)
 

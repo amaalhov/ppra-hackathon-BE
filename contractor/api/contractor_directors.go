@@ -35,7 +35,7 @@ func (c *ContractorStore) AddContractorDirectors(w http.ResponseWriter, req bunr
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_director"},
-		[]string{"full_name", "nationality", "postal_address", "physical_address", "appointment_date"},
+		[]string{"full_name", "nationality", "box_address", "physical_address", "appointment_date"},
 		pgx.CopyFromRows(copyData),
 	)
 
