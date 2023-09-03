@@ -8,7 +8,7 @@ metadata:
 spec:
   #storageClassName: "hostpath"
   capacity:
-    storage: 5Gi # Sets PV Volume
+    storage: 1Gi # Sets PV Volume
   accessModes:
     - ReadWriteMany
   hostPath:

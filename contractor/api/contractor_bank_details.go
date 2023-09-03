@@ -10,15 +10,23 @@ import (
 )
 
 const insertBankDetails = `
-	INSERT INTO contractor_bank_detail (bank_name, branch, branch_address, account_number, account_type)
-	VALUES ($1, $2, $3, $4, $5)
-	RETURNING *;
+	INSERT INTO contractor_bank_detail (company_uuid, bank_name, branch, branch_address, account_number, account_type)
+	VALUES ($1, $2, $3, $4, $5, $6)
+	RETURNING bank_name, brach, branch_address, account_number, account_type;
 `
 
 func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bunrouter.Request) error {
-
 	var reqBody model.ContractorBankDetailsReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
 
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
@@ -33,7 +41,7 @@ func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bu
 	defer conn.Release()
 
 	row := conn.QueryRow(
-		req.Context(), insertBankDetails, reqBody.BankName, reqBody.Branch, reqBody.BranchAddress, reqBody.AccountNumber, reqBody.AccountType,
+		req.Context(), insertBankDetails, id, reqBody.BankName, reqBody.Branch, reqBody.BranchAddress, reqBody.AccountNumber, reqBody.AccountType,
 	)
 
 	var bankId int64

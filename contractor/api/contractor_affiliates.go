@@ -14,6 +14,15 @@ func (c *ContractorStore) AddContractorAffiliates(w http.ResponseWriter, req bun
 	var reqBody []model.ContractorAffiliateReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
 
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
+
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
@@ -29,13 +38,13 @@ func (c *ContractorStore) AddContractorAffiliates(w http.ResponseWriter, req bun
 	var copyData [][]interface{}
 
 	for _, data := range reqBody {
-		copyData = append(copyData, []interface{}{data.Fullname, data.Address, data.AttachmentUlr})
+		copyData = append(copyData, []interface{}{id, data.Fullname, data.Address, data.AttachmentUlr})
 	}
 
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_affiliate"},
-		[]string{"full_name", "address", "attachment_url"},
+		[]string{"company_uuid", "full_name", "address", "attachment_url"},
 		pgx.CopyFromRows(copyData),
 	)
 

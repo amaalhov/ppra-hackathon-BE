@@ -11,15 +11,23 @@ import (
 )
 
 const insertEmployeeStats = `
-	INSERT INTO contractor_employee_stats (total_number_of_citizens, total_number_of_non_citizens, total_employees)
-	VALUES ($1, $2, $3)
+	INSERT INTO contractor_employee_stats (company_uuid, total_number_of_citizens, total_number_of_non_citizens, total_employees)
+	VALUES ($1, $2, $3, $4)
 	RETURNING id;
 `
 
 func (c *ContractorStore) AddContractorEmployees(w http.ResponseWriter, req bunrouter.Request) error {
 	var reqBody model.ContractorEmployeeReq
-
 	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
 
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
@@ -34,7 +42,7 @@ func (c *ContractorStore) AddContractorEmployees(w http.ResponseWriter, req bunr
 	defer conn.Release()
 
 	row := conn.QueryRow(
-		req.Context(), insertEmployeeStats, reqBody.TotalNumberOfBotswanaCitizens, reqBody.TotalNumberOfNonBotswanaCitizens, reqBody.TotalEmployees)
+		req.Context(), insertEmployeeStats, id, reqBody.TotalNumberOfBotswanaCitizens, reqBody.TotalNumberOfNonBotswanaCitizens, reqBody.TotalEmployees)
 
 	var statsId int64
 

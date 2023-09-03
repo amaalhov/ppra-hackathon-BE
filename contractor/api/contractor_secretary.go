@@ -10,7 +10,7 @@ import (
 )
 
 const insertSecretary = `
-	INSERT INTO contractor_secretary (full_name, nationality, physical_address, box_address, appointment_date)
+	INSERT INTO contractor_secretary (company_uuid, full_name, nationality, physical_address, box_address, appointment_date)
 	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id, full_name, nationality, physical_address, box_address, appointment_date;
 `
@@ -18,6 +18,15 @@ const insertSecretary = `
 func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunrouter.Request) error {
 	var reqBody model.ContractorSecretaryReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
 
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
@@ -32,7 +41,7 @@ func (c *ContractorStore) AddContractorSecretary(w http.ResponseWriter, req bunr
 	defer conn.Release()
 
 	row := conn.QueryRow(
-		req.Context(), insertSecretary, reqBody.Fullname, reqBody.Nationality, reqBody.PhysicalAddress, reqBody.BoxAddress, reqBody.AppointmentDate)
+		req.Context(), insertSecretary, id, reqBody.Fullname, reqBody.Nationality, reqBody.PhysicalAddress, reqBody.BoxAddress, reqBody.AppointmentDate)
 
 	var bankId int64
 

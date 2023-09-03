@@ -14,6 +14,15 @@ func (c *ContractorStore) AddContractorDirectors(w http.ResponseWriter, req bunr
 	var reqBody []model.ContractorDirectorReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
 
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
+
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
@@ -29,13 +38,13 @@ func (c *ContractorStore) AddContractorDirectors(w http.ResponseWriter, req bunr
 	var copyData [][]interface{}
 
 	for _, data := range reqBody {
-		copyData = append(copyData, []interface{}{data.Fullname, data.Nationality, data.BoxAddress, data.PhysicalAddress, data.AppointmentDate})
+		copyData = append(copyData, []interface{}{id, data.Fullname, data.Nationality, data.BoxAddress, data.PhysicalAddress, data.AppointmentDate})
 	}
 
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_director"},
-		[]string{"full_name", "nationality", "box_address", "physical_address", "appointment_date"},
+		[]string{"company_uuid", "full_name", "nationality", "box_address", "physical_address", "appointment_date"},
 		pgx.CopyFromRows(copyData),
 	)
 

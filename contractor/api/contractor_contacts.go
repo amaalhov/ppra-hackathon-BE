@@ -14,6 +14,15 @@ func (c *ContractorStore) AddContractorContacts(w http.ResponseWriter, req bunro
 	var reqBody []model.ContractorContactReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
 
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
+
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
 		log.Println(err.Error())
@@ -30,7 +39,7 @@ func (c *ContractorStore) AddContractorContacts(w http.ResponseWriter, req bunro
 
 	for _, data := range reqBody {
 		copyData = append(copyData, []interface{}{
-			data.FirstName, data.MiddleName, data.LastName, data.DateOfBirth, data.Email, data.CellNumber, data.Telephone,
+			id, data.FirstName, data.MiddleName, data.LastName, data.DateOfBirth, data.Email, data.CellNumber, data.Telephone,
 			data.BusinessPhoneNumber, data.Country, data.DistrictName, data.Town, data.Street, data.BoxAddress,
 			data.PlotNumber, data.PhysicalAddress, data.ContactType,
 		})
@@ -39,7 +48,7 @@ func (c *ContractorStore) AddContractorContacts(w http.ResponseWriter, req bunro
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_contact"},
-		[]string{"first_name", "middle_name", "last_name", "data_of_birth", "email", "cellphone", "telephone",
+		[]string{"company_uuid", "first_name", "middle_name", "last_name", "data_of_birth", "email", "cellphone", "telephone",
 			"business_number", "country", "district", "town", "street", "box_address", "plot_number",
 			"physical_address", "contact_type",
 		},

@@ -1,5 +1,6 @@
   CREATE TABLE IF NOT EXISTS contractor_contact (
 	id SERIAL PRIMARY KEY,
+	company_uuid UUID,
 	full_name TEXT,
 	first_name TEXT,
 	middle_name TEXT,

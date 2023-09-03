@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS contractor_equipment (
 	id SERIAL PRIMARY KEY,
+	company_uuid UUID,
 	value_of_assets DOUBLE PRECISION,
 	value_of_equipment DOUBLE PRECISION,
 	paid_up_capital DOUBLE PRECISION

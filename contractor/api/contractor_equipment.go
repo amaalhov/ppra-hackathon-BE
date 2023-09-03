@@ -11,16 +11,23 @@ import (
 )
 
 const insertEquipmentStats = `
-	INSERT INTO contractor_equipment (value_of_assets, value_of_equipment, paid_up_capital)
-	VALUES ($1, $2, $3)
+	INSERT INTO contractor_equipment (company_uuid, value_of_assets, value_of_equipment, paid_up_capital)
+	VALUES ($1, $2, $3, $4)
 	RETURNING id;
 `
 
 func (c *ContractorStore) AddContractorEquipment(w http.ResponseWriter, req bunrouter.Request) error {
-
 	var reqBody model.ContractorVehicleReq
-
 	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
 
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
@@ -35,7 +42,7 @@ func (c *ContractorStore) AddContractorEquipment(w http.ResponseWriter, req bunr
 	defer conn.Release()
 
 	row := conn.QueryRow(
-		req.Context(), insertEquipmentStats, reqBody.ValueOfAssets, reqBody.ValueOfEquipment, reqBody.PaidUpCapital)
+		req.Context(), insertEquipmentStats, id, reqBody.ValueOfAssets, reqBody.ValueOfEquipment, reqBody.PaidUpCapital)
 
 	var statsId int64
 
