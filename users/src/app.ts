@@ -21,6 +21,8 @@ app.use(
 
 app.use(currentUser);
 
+
+
 app.use(indexUserRouter);
 app.use(createUserRouter);
 app.use(getUserRouter);
