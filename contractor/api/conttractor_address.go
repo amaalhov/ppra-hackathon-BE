@@ -10,14 +10,23 @@ import (
 )
 
 const insertAddress = `
-	INSERT INTO contractor_address (country, district_name, town, plot_number, street)
-	VALUES ($1, $2, $3, $4, $5)
-	RETURNING *;
+	INSERT INTO contractor_address (company_uuid, country, district_name, town, plot_number, street)
+	VALUES ($1, $2, $3, $4, $5, $6)
+	RETURNING country, district_name, town, plot_number, street;
 `
 
 func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req bunrouter.Request) error {
 	var reqBody model.ContractorAddressReq
 	json.NewDecoder(req.Body).Decode(&reqBody)
+
+	id := req.URL.Query().Get("company_uuid")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return bunrouter.JSON(w, bunrouter.H{
+			"message": "company_uuid is required",
+			"status":  false,
+		})
+	}
 
 	conn, err := c.db.Acquire(req.Context())
 	if err != nil {
@@ -32,7 +41,7 @@ func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req
 	defer conn.Release()
 
 	row := conn.QueryRow(
-		req.Context(), insertAddress, reqBody.Country, reqBody.DistrictName, reqBody.Town, reqBody.PlotNumber, reqBody.Street,
+		req.Context(), insertAddress, id, reqBody.Country, reqBody.DistrictName, reqBody.Town, reqBody.PlotNumber, reqBody.Street,
 	)
 
 	var addressId int64

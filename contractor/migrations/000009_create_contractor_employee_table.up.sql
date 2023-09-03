@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS contractor_employee_stats (
 	id SERIAL PRIMARY KEY,
+	company_uuid UUID,
 	total_number_of_citizens INTEGER,
 	total_number_of_non_citizens INTEGER,
 	total_employees INTEGER

@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS contractor_secretary(
 	id SERIAL PRIMARY KEY,
+	company_uuid UUID,
 	full_name TEXT,
 	nationality TEXT,
 	appointment_date TIMESTAMPTZ,
@@ -9,6 +10,7 @@ CREATE TABLE IF NOT EXISTS contractor_secretary(
 
 CREATE TABLE IF NOT EXISTS contractor_shareholder(
 	id SERIAL PRIMARY KEY,
+	company_uuid UUID,
 	full_name TEXT,
 	nationality TEXT,
 	appointment_date TIMESTAMPTZ,
@@ -18,6 +20,7 @@ CREATE TABLE IF NOT EXISTS contractor_shareholder(
 
 CREATE TABLE IF NOT EXISTS contractor_director(
 	id SERIAL PRIMARY KEY,
+	company_uuid UUID,
 	full_name TEXT,
 	nationality TEXT,
 	appointment_date TIMESTAMPTZ,
