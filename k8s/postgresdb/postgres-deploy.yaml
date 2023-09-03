@@ -1,0 +1,16 @@
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: postgresdb
+  namespace: default
+spec:
+  replicas: 1
+  image: timescale/timescaledb:latest-pg15
+  database:
+    size: 1Gi
+  env:
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgresdb-secret
+          key: superUserPassword
