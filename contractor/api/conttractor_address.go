@@ -12,7 +12,7 @@ import (
 const insertAddress = `
 	INSERT INTO contractor_address (company_uuid, country, district_name, town, plot_number, street)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	RETURNING country, district_name, town, plot_number, street;
+	RETURNING id, country, district_name, town, plot_number, street;
 `
 
 func (c *ContractorStore) AddContractorAddressDetails(w http.ResponseWriter, req bunrouter.Request) error {

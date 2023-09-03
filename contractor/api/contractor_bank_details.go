@@ -12,7 +12,7 @@ import (
 const insertBankDetails = `
 	INSERT INTO contractor_bank_detail (company_uuid, bank_name, branch, branch_address, account_number, account_type)
 	VALUES ($1, $2, $3, $4, $5, $6)
-	RETURNING bank_name, brach, branch_address, account_number, account_type;
+	RETURNING id, bank_name, branch, branch_address, account_number, account_type;
 `
 
 func (c *ContractorStore) AddContractorBankDetails(w http.ResponseWriter, req bunrouter.Request) error {

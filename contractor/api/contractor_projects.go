@@ -46,7 +46,7 @@ func (c *ContractorStore) AddContractorProjects(w http.ResponseWriter, req bunro
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_project"},
-		[]string{"company_uuid, name", "description", "client_name", "client_representative", "client_contact_number"},
+		[]string{"company_uuid", "name", "description", "client_name", "client_representative", "client_contact_number"},
 		pgx.CopyFromRows(copyData),
 	)
 

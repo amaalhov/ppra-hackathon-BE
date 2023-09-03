@@ -11,7 +11,7 @@ import (
 
 const insertSecretary = `
 	INSERT INTO contractor_secretary (company_uuid, full_name, nationality, physical_address, box_address, appointment_date)
-	VALUES ($1, $2, $3, $4, $5)
+	VALUES ($1, $2, $3, $4, $5, $6)
 	RETURNING id, full_name, nationality, physical_address, box_address, appointment_date;
 `
 
