@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth
-          image: auth
+          image: amaalhov/auth
           ports:
             - containerPort: 3000
               name: http

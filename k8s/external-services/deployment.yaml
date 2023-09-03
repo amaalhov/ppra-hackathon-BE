@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: external-services
-          image: external-services
+          image: amaalhov/external-services
           ports:
             - containerPort: 3001
               name: http
