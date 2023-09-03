@@ -17,7 +17,7 @@ import (
 func main() {
 	// wait to connect to postgres db server
 	time.Sleep(30 * time.Second)
-	dbUrl := "postgresql://admin:psltest@postgresdb:5432/postgres?sslmode=disable"
+	dbUrl := "postgresql://postgres:psltest@postgresdb:5432/postgres?sslmode=disable"
 	pool, err := pgxpool.New(context.Background(), dbUrl)
 	if err != nil {
 		log.Fatal(err.Error())
