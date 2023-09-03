@@ -1,38 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: users-depl
+  name: auth
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: users
+      app: auth
   template:
     metadata:
       labels:
-        app: users
+        app: auth
     spec:
       containers:
-        - name: users
-          image: amaalhov/users
+        - name: auth
+          image: auth
+          ports:
+            - containerPort: 3000
+              name: http
           env:
             - name: MONGO_URI
-              value: 'mongodb://users-mongo-srv:27017/users'
+              value: 'mongodb://auth-mongo-srv:27017/auth'
             - name: JWT_KEY
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: users-srv
-spec:
-  selector:
-    app: users
-  ports:
-    - name: users
-      protocol: TCP
-      port: 3000
-      targetPort: 3000

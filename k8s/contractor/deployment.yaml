@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contractor
+  labels:
+    app: contractor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contractor
+  template:
+    metadata:
+      labels:
+        app: contractor
+    spec:
+      containers:
+        - name: contractor
+          image: contractor
+          ports:
+            - containerPort: 3002
+              name: http

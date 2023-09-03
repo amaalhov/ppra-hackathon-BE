@@ -1,26 +1,40 @@
-apiVersion: skaffold/v2alpha3
+apiVersion: skaffold/v4beta1
 kind: Config
-deploy:
-  kubectl:
-    manifests:
-      - ./infra/k8s/*
 build:
   local:
     push: false
   artifacts:
-    - image: amaalhov/auth
+    - image: external-services
+      context: external-services
+    - image: contractor
+      context: contractor
+    - image: auth
       context: auth
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
-    - image: amaalhov/users
+    - image: users
       context: users
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+manifests:
+  rawYaml:
+    - k8s/mongodb/*
+    - k8s/postgresdb/*
+    - k8s/external-services/*
+    - k8s/contractor/*
+    - k8s/auth/*
+    - k8s/users/*
+    - k8s/networking/*
+portForward:
+  - resourceType: deployment
+    resourceName: auth
+    port: http
+    localPort: 3000
+  - resourceType: deployment
+    resourceName: external-services
+    port: http
+    localPort: 3001
+  - resourceType: deployment
+    resourceName: contractor
+    port: http
+    localPort: 3002
+  - resourceType: deployment
+    resourceName: users
+    port: http
+    localPort: 3003
