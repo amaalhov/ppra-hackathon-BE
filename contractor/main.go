@@ -5,6 +5,7 @@ import (
 	"contractor-services/api"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -14,6 +15,7 @@ import (
 )
 
 func main() {
+	time.Sleep(60 * time.Second)
 	dbUrl := "postgresql://admin:psltest@postgresdb:5432/postgres?sslmode=disable"
 	pool, err := pgxpool.New(context.Background(), dbUrl)
 	if err != nil {

@@ -1,4 +1,4 @@
-apiVersion: skaffold/v4beta6
+apiVersion: skaffold/v4beta1
 kind: Config
 build:
   local:
@@ -14,12 +14,12 @@ build:
       context: users
 manifests:
   rawYaml:
+    - k8s/mongodb/*
+    - k8s/postgresdb/*
     - k8s/external-services/*
     - k8s/contractor/*
-    - k8s/mongodb/*
     - k8s/auth/*
     - k8s/users/*
-    - k8s/postgresdb/*
     - k8s/networking/*
 portForward:
   - resourceType: deployment
