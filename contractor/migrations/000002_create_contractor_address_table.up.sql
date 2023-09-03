@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS contractor_address (
 	district_name TEXT,
 	town TEXT,
 	plot_number TEXT,
-	street TEXT,
+	street TEXT
 )

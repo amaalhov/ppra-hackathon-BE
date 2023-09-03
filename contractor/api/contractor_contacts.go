@@ -48,7 +48,7 @@ func (c *ContractorStore) AddContractorContacts(w http.ResponseWriter, req bunro
 	copyCount, err := conn.CopyFrom(
 		req.Context(),
 		pgx.Identifier{"contractor_contact"},
-		[]string{"company_uuid", "first_name", "middle_name", "last_name", "data_of_birth", "email", "cellphone", "telephone",
+		[]string{"company_uuid", "first_name", "middle_name", "last_name", "date_of_birth", "email", "cellphone", "telephone",
 			"business_number", "country", "district", "town", "street", "box_address", "plot_number",
 			"physical_address", "contact_type",
 		},
