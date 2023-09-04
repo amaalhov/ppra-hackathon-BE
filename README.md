@@ -1,17 +1,39 @@
 # ppra-hackathon-BE
+
 Users service
-/api/users/
+
+GET /api/users/
+
+POST /api/users/
+
+PUT /api/users/:id
 
 Contractor service
+
 /api/contractor
 
+Applications
+
+GET /api/applications/:id
+
+GET /api/applications
+
+POST /api/applications
+
+PUT /api/applications/:id
+
 Auth service
-/api/auth/signup
-/api/auth/signin
-/api/auth/currentuser
+
+POST /api/auth/signup
+
+POST /api/auth/signin
+
+GET /api/auth/currentuser
 
 Payments
-/api/payments
+
+POST /api/payments
 
 External services
-/api/external-services
+
+GET /api/external-services
