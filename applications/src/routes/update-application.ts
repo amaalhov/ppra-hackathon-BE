@@ -12,14 +12,14 @@ import { Application } from '../models/applications';
 const router = express.Router();
 
 router.put(
-  '/api/application/:id',
+  '/api/applications/:id',
   requireAuth,
-  [
-    body('title').not().isEmpty().withMessage('Title is required'),
-    body('price')
-      .isFloat({ gt: 0 })
-      .withMessage('Price must be provided and must be greater than 0'),
-  ],
+  // [
+  //   body('title').not().isEmpty().withMessage('Title is required'),
+  //   body('price')
+  //     .isFloat({ gt: 0 })
+  //     .withMessage('Price must be provided and must be greater than 0'),
+  // ],
   validateRequest,
   async (req: Request, res: Response) => {
     const application = await Application.findById(req.params.id);
@@ -28,8 +28,10 @@ router.put(
       throw new NotFoundError();
     }
 
-    if (application.orderId) {
-      throw new BadRequestError('Cannot edit a reserved ticket');
+    if (application.status === 'pending' && req.currentUser!.role !== 'admin') {
+      throw new BadRequestError(
+        'Cannot edit a reserved application under review'
+      );
     }
 
     if (application.userId !== req.currentUser!.id) {
@@ -37,8 +39,13 @@ router.put(
     }
 
     application.set({
-      title: req.body.title,
-      price: req.body.price,
+      // title: req.body.title,
+      // price: req.body.price,
+      descipline: req.body.descipline,
+      description: req.body.description,
+      code: req.body.code,
+      subcodes: req.body.subcodes,
+      status: req.body.status,
     });
     await application.save();
 
