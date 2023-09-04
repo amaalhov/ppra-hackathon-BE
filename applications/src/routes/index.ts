@@ -3,8 +3,8 @@ import { Application } from '../models/applications';
 
 const router = express.Router();
 
-router.get('/api/application', async (req: Request, res: Response) => {
-  const tickets = await Application.find({});
+router.get('/api/applications', async (req: Request, res: Response) => {
+  const application = await Application.find({});
 
   res.send(application);
 });

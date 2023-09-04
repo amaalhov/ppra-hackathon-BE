@@ -18,6 +18,7 @@ interface ApplicationAttrs {
   descipline: string;
   code: string;
   description: string;
+  status: string;
   subcodes: Array<{
     subcode: string;
     description: string;
@@ -30,6 +31,7 @@ interface ApplicationDoc extends mongoose.Document {
   descipline: string;
   code: string;
   description: string;
+  status: string;
   subcodes: Array<{
     subcode: string;
     description: string;
@@ -59,6 +61,10 @@ const applicationSchema = new mongoose.Schema(
       required: true,
     },
     description: {
+      type: String,
+      required: true,
+    },
+    status: {
       type: String,
       required: true,
     },

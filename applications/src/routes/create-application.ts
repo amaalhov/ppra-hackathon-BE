@@ -6,7 +6,7 @@ import { Application } from '../models/applications';
 const router = express.Router();
 
 router.post(
-  '/api/application',
+  '/api/applications',
   requireAuth,
   // [
   //   body('title').not().isEmpty().withMessage('Title is required'),
@@ -16,11 +16,21 @@ router.post(
   // ],
   validateRequest,
   async (req: Request, res: Response) => {
-    // const { descipline, code, description, subcodes } = req.body;
+    const { descipline, code, description, subcodes } = req.body;
 
-    const applicationData = req.body;
+    const application = Application.build({
+      userId: req.currentUser!.id,
+      descipline,
+      description,
+      code,
+      subcodes,
+      orderId: req.currentUser!.id.concat('id'),
+      status: 'pending',
+    });
 
-    const application = new Application(applicationData);
+    // const applicationData = req.body;
+
+    // const application = new Application(applicationData);
 
     // const application = Application.build({
 
