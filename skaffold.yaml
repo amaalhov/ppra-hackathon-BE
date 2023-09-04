@@ -12,6 +12,12 @@ build:
       context: auth
     - image: users
       context: users
+    - image: payments
+      context: payments
+    - image: applications
+      context: applications
+    - image: orders
+      context: orders
 manifests:
   rawYaml:
     - k8s/mongodb/*

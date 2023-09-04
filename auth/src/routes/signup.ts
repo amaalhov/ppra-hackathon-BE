@@ -19,6 +19,7 @@ router.post(
   validateRequest,
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
+    const role = 'contractor';
 
     const existingUser = await User.findOne({ email });
 
@@ -26,7 +27,7 @@ router.post(
       throw new BadRequestError('Email in use');
     }
 
-    const user = User.build({ email, password });
+    const user = User.build({ email, password, role });
     await user.save();
 
     // Generate JWT
@@ -34,6 +35,7 @@ router.post(
       {
         id: user.id,
         email: user.email,
+        role: user.role,
       },
       process.env.JWT_KEY!
     );
