@@ -13,7 +13,7 @@ spec:
         app: payments
     spec:
       containers:
-        - name: users
+        - name: payments
           image: amaalhov/payments
           env:
             - name: MONGO_URI
@@ -23,6 +23,11 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: STRIPE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_KEY
 ---
 apiVersion: v1
 kind: Service
