@@ -8,6 +8,7 @@ import { User } from '../models/user';
 
 const router = express.Router();
 
+
 router.post(
   '/api/auth/signin',
   [
@@ -44,7 +45,7 @@ router.post(
       process.env.JWT_KEY!
     );
 
-    // Store it on session object
+    //Store it on session object
     req.session = {
       jwt: userJwt,
     };

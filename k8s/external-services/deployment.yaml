@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-services
+  labels:
+    app: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: external-services
+  template:
+    metadata:
+      labels:
+        app: external-services
+    spec:
+      containers:
+        - name: external-services
+          image: amaalhov/external-services
+          ports:
+            - containerPort: 3001
+              name: http
